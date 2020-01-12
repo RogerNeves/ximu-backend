@@ -3,8 +3,9 @@ const app = express();
 const mysql = require('mysql');
 const bodyParser = require("body-parser");
 const middlewareAutenticar = require("../middleware/autenticar");
-const { user: userDB, password: passwordDB, url: urlDB}  = require('../dataBase/mysql.json')
-const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/XimuDB`
+const { user: userDB, password: passwordDB, url: urlDB, database} = require('../dataBase/mysql.json')
+const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/${database}`
+
 const router = express.Router();
 
 

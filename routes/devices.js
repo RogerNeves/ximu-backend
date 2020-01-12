@@ -5,8 +5,8 @@ var bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 var middlewareAutenticar = require("../middleware/autenticar");
 const autenticar = require("./../config/deviceAuth.json");
-const { user: userDB, password		: passwordDB, url: urlDB}  = require('../dataBase/mysql.json')
-const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/XimuDB`
+const { user: userDB, password: passwordDB, url: urlDB, database} = require('../dataBase/mysql.json')
+const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/${database}`
 var router = express.Router();
 
 app.use(bodyParser.json());
@@ -24,7 +24,7 @@ router.get('/', async function (req, res) {
 		sql = "SELECT Devices.id AS id,Devices.name AS name, Models.name AS model, Devices.token as token FROM Devices INNER JOIN Models on Devices.idModels = Models.id WHERE Models.idUser = " + req.userId;
 	}
 
-	const connection = mysql.createConnection(consMysql);
+	const connection = mysql.createConnection(consMysql)
 	await connection.query(sql, async function (error, results) {
 		if (error) {
 			console.log(error)
@@ -69,11 +69,12 @@ router.post('/', async function (req, res) {
 router.put('/', async function (req, res) {
 	let device = [];
 	device.push(req.body.device.name);
-	device.push(parseInt(req.body.device.IdModelos));
+	device.push(parseInt(req.body.device.IdModels));
 	device.push(req.body.device.id)
 	const connection = mysql.createConnection(consMysql);
-	await connection.query("UPDATE Devices SET name=?, idModel=? WHERE id = ?", device, async function (error, results) {
+	await connection.query("UPDATE Devices SET name=?, IdModels=? WHERE id = ?", device, async function (error, results) {
 		if (error) {
+			console.log(error)
 			return res.status(304).end();
 		}
 		return res.status(200).end();

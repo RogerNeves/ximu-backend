@@ -3,8 +3,8 @@ var app = express();
 var mysql = require('mysql');
 var bodyParser = require("body-parser");
 var middlewareAutenticar = require("../middleware/autenticar");
-const { user: userDB, password: passwordDB, url: urlDB}  = require('../dataBase/mysql.json')
-const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/XimuDB`
+const { user: userDB, password: passwordDB, url: urlDB, database} = require('../dataBase/mysql.json')
+const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/${database}`
 
 var router = express.Router();
 
@@ -51,30 +51,30 @@ router.post('/', async function (req, res) {
 router.put('/', async function (req, res) {
   let dadosNovos = req.body.datas.filter(dado => !dado.id)
   dadosNovos = dadosNovos.map(dado => {
-    return [dado.nome, dado.IdModel, parseInt(dado.idDataType)]})
+    return [dado.name, dado.IdModel, parseInt(dado.idDataType)]})
   const values = dadosNovos.map(() => "(?)")
+  const url = urlDB.slice(0, urlDB.length -5)
   const connection = mysql.createConnection({
-    host: urlDB,
+    host: url,
     user: userDB,
     password: passwordDB,
-    database: 'Ximu',
+    database,
     multipleStatements: true
   })
   if(dadosNovos.length){
     await connection.query("INSERT INTO ModelsData(Name, IdModel, idDataType) VALUES " + values.join(","), dadosNovos, async function (error, results) {
       if (error) {
-        console.log(error);
         return res.status(304).end();
       }
       });
   }
     let dadosAntigos = req.body.datas.filter(dado => dado.id)
-    dadosAntigos = dadosAntigos.map(dado => [dado.nome, parseInt(dado.idTiposDados), dado.id])
-
+    dadosAntigos = dadosAntigos.map(dado => [dado.name, parseInt(dado.idDataType), dado.id])
+    console.log(dadosAntigos)
     dadosAntigos = dadosAntigos.map((dado) => mysql.format("UPDATE ModelsData SET name = ? ,idDataType= ?  WHERE id = ?; ", dado));
     await connection.query(dadosAntigos.join(""), async function (error, results) {
       if (error) {
-        console.log(error);
+        console.log(error)
         return res.status(304).end();
       }
       let resposta = results[0];

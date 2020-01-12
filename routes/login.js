@@ -7,8 +7,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require('cors');
 const autenticar = require("./../config/autenticar");
-const { user: userDB, password: passwordDB, url: urlDB } = require('../dataBase/mysql.json')
-const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/XimuDB`
+const { user: userDB, password: passwordDB, url: urlDB, database} = require('../dataBase/mysql.json')
+const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/${database}`
 const router = express.Router();
 
 
@@ -45,11 +45,11 @@ router.post('/singup', async function (req, res, next) {
 	if (req.body.singup.password == req.body.singup.confirmPassword) {
 		login[1] = req.body.singup.password;
 	}
-	console.log(user,login)
 	const connection = mysql.createConnection(consMysql);
 	connection.query("INSERT INTO Users(name) VALUES(?)", user, async function (error, results, fields) {
 		if (error) {
-			res.status(400).send(error);
+			console.log(error);
+			res.status(400).send(error).end();
 		}
 		login[2] = results.insertId;
 		var hash = await bcrypt.hash(login[1], 10);

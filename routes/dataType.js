@@ -3,8 +3,8 @@ const app = express();
 const mysql = require('mysql');
 const bodyParser = require("body-parser");
 const middlewareAutenticar = require("../middleware/autenticar");
-const { user: userDB, password: passwordDB, url: urlDB}  = require('../dataBase/mysql.json')
-const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/XimuDB`
+const { user: userDB, password: passwordDB, url: urlDB, database} = require('../dataBase/mysql.json')
+const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/${database}`
 const router = express.Router();
 
 app.use(bodyParser.json());
@@ -21,6 +21,7 @@ router.get('/', function (req, res, next) {
     const connection = mysql.createConnection(consMysql);
     connection.query(sql, function (error, results) {
         if (error) {
+            console.log(error)
             return res.status(404).end();
         }
         let resposta = results;

@@ -3,8 +3,8 @@ var app = express();
 var mysql = require('mysql');
 var bodyParser = require("body-parser");
 var middlewareAutenticar = require("../middleware/autenticar");
-const { user: userDB, password: passwordDB, url: urlDB}  = require('../dataBase/mysql.json')
-const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/XimuDB`
+const { user: userDB, password: passwordDB, url: urlDB, database} = require('../dataBase/mysql.json')
+const consMysql = `mysql://${userDB}:${passwordDB}@${urlDB}/${database}`
 var router = express.Router();
 
 app.use(bodyParser.json());
@@ -59,8 +59,8 @@ router.post('/', async function (req, res) {
 
 router.put('/', async function (req, res) {
   let model = [];
-  model.push(req.body.model.name);
-  model.push(req.body.model.Id);
+  model.push(req.body.model.name)
+  model.push(req.body.model.id)
   const connection = mysql.createConnection(consMysql);
   await connection.query("UPDATE Models SET name=? WHERE id = ?", model, async function (error, results) {
     if (error) {
@@ -78,7 +78,7 @@ router.delete('/:id', async function (req, res) {
     if (error) {
       console.log(error)
       return res.status(404).end();
-    }
+    }  
     return res.status(200).end();
   });
 })
