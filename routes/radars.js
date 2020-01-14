@@ -28,16 +28,16 @@ router.get('/:idView', async function (req, res) {
 router.post('/', async function (req, res) {
 	const view = []
 	const radar = []
-	view.push(req.body.radar.name)
-	view.push(req.body.radar.idDashboard)
-	view.push(req.body.radar.type)
-	view.push(req.body.radar.idDevice)
+	view.push(req.body.view.name)
+	view.push(req.body.view.idDashboard)
+	view.push(req.body.view.type)
+	view.push(req.body.view.idDevice)
 	radar.push(req.body.radar.data)
 	radar.push(req.body.radar.divider)
 	radar.push(req.body.radar.dataStyle)
 	radar.push(req.body.radar.dateStyle || null)
 	const connection = mysql.createConnection(consMysql);
-	await connection.query("INSERT INTO views(name, idDashboard, type, idDevice) VALUES (?,?,?,?)", view, async function (error, results) {
+	await connection.query("INSERT INTO views(name, idDashboards, type, idDevice) VALUES (?,?,?,?)", view, async function (error, results) {
 		if (error) {
 			return res.status(404).end();
 		}

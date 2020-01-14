@@ -21,7 +21,7 @@ router.get('/', async function (req, res) {
 	else if (req.query.model) {
 		sql = "SELECT * FROM Devices WHERE idModel = " + req.query.model;
 	} else {
-		sql = "SELECT Devices.id AS id,Devices.name AS name, Models.name AS model, Devices.token as token FROM Devices INNER JOIN Models on Devices.idModels = Models.id WHERE Models.idUser = " + req.userId;
+		sql = "SELECT Devices.id AS id,Devices.name AS name, Models.name AS model, Devices.IdModels, Devices.token as token FROM Devices INNER JOIN Models on Devices.idModels = Models.id WHERE Models.idUser = " + req.userId;
 	}
 
 	const connection = mysql.createConnection(consMysql)

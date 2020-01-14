@@ -18,6 +18,8 @@ router.get('/', async function (req, res) {
     sql = "SELECT * FROM ModelsData WHERE id = " + req.query.id;
   }else if(req.query.idModel){
     sql = "SELECT * FROM ModelsData WHERE idModel = " + req.query.idModel;
+  }else if(req.query.idDevice){
+    sql = "SELECT ModelsData.id, ModelsData.name FROM (ModelsData INNER JOIN Models ON ModelsData.IdModel = Models.id) INNER JOIN Devices ON Models.id = Devices.IdModels WHERE Devices.id = " + req.query.idDevice;
   }  
 
   const connection = mysql.createConnection(consMysql);

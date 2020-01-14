@@ -42,6 +42,7 @@ router.post('/', async function (req, res) {
       return res.status(304).end();
     }
     const datas = req.body.datas.map(data => [data.name, results.insertId, parseInt(data.idDataType)])
+    datas.push(["createAt", results.insertId,3])
     console.log(datas);
     const values = datas.map(() => "(?)")
     await connection.query("INSERT INTO ModelsData(name, IdModel, idDataType) VALUES " + values.join(","), datas, async function (error, results) {

@@ -27,22 +27,24 @@ router.get('/:idView', async function (req, res) {
 router.post('/', async function (req, res) {
 	const view = []
 	const line = []
-	view.push(req.body.line.name)
-	view.push(req.body.line.idDashboard)
-	view.push(req.body.line.type)
-	view.push(req.body.radar.idDevice)
+	view.push(req.body.view.name)
+	view.push(req.body.view.idDashboard)
+	view.push(req.body.view.type)
+	view.push(req.body.view.idDevice)
 	line.push(req.body.line.data)
 	line.push(req.body.line.divider)
 	line.push(req.body.line.dataStyle)
 	line.push(req.body.line.dateStyle || null)
 	const connection = mysql.createConnection(consMysql);
-	await connection.query("INSERT INTO views(name, idDashboard, type, idDevice) VALUES (?,?,?,?)", view, async function (error, results) {
+	await connection.query("INSERT INTO Views(name, idDashboards, type, idDevice) VALUES (?,?,?,?)", view, async function (error, results) {
 		if (error) {
 			return res.status(404).end();
 		}
 		line.push(results.insertId)
-		await connection.query("INSERT INTO Lines(data, divider, dataStyle, dateStyle, idView) VALUES (?,?,?,?,?)", line, async function (error, results) {
+		console.log(line)
+		await connection.query("INSERT INTO `Lines`(data, divider, dataStyle, dateStyle, idView) VALUES (?,?,?,?,?)", line, async function (error, results) {
 			if (error) {
+				console.log(error)
 				return res.status(404).end();
 			}
 			let response = results[0];
